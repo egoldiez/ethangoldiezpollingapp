@@ -19,10 +19,10 @@ import {
   ScrollView,
 } from 'react-native';
 
-import WritePollParameter from './writePollParameter';
 import { Navigation } from 'react-native-navigation';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { Sae } from 'react-native-textinput-effects';
+import Firebase from 'react-native-firebase'
 
 const pollParameters = [
   {placeholder: 'Option 1', identityName: 'ansOne'},
@@ -55,6 +55,10 @@ export default class App extends Component<{}> {
     ]
   };
 
+  componentDidMount () {
+    Firebase.database().ref('/').on('value', (snapshot) => {console.log(snapshot.val())})
+  }
+
   constructor(props) {
     super(props)
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
@@ -83,6 +87,7 @@ export default class App extends Component<{}> {
 
   onButtonPress(event) {
     this.setState({finishPoll: true});
+    console.log(this.state.pollName + '--' + this.state.category + '--' + this.state.ans1 + '--' + this.state.ans2)
     this.props.navigator.dismissModal({
       animationType: 'slide-down' // 'none' / 'slide-down' , dismiss animation for the modal (optional, default 'slide-down')
     });
@@ -173,7 +178,7 @@ export default class App extends Component<{}> {
           </View>
         </View>
       </SafeAreaView>
-    );  
+    );
   }
 }
 

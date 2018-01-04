@@ -1,0 +1,39 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'polling' do
+
+  platform :ios, '9.0'
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for polling
+
+  # target 'polling-tvOSTests' do
+  #   inherit! :search_paths
+  #   # Pods for testing
+  # end
+
+  pod 'Firebase/Core'
+
+  pod 'Firebase/Database'
+
+  target 'pollingTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
+
+target 'polling-tvOS' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for polling-tvOS
+
+  target 'polling-tvOSTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
