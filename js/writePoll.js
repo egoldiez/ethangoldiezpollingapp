@@ -11,18 +11,19 @@ import {
   Dimensions,
   Platform,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  ScrollView,
 } from 'react-native';
 
 import { Navigation } from 'react-native-navigation';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { Sae } from 'react-native-textinput-effects';
 import Firebase from 'react-native-firebase'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const pollParameters = [
   {placeholder: 'Option 1', identityName: 'ansOne'},
@@ -30,6 +31,13 @@ const pollParameters = [
   {placeholder: 'Option 3(Optional)', identityName: 'ansThree'},
   {placeholder: 'Option 4(Optional)', identityName: 'ansFour'},
 ];
+
+const labelName = {
+  'ansOne': 'Option 1',
+  'ansTwo': 'Option 2',
+  'ansThree': 'Option 3(Optional)',
+  'ansFour': 'Option 4(Optional)',
+}
 
 const BUTTONS = [
   'Option 0',
@@ -46,18 +54,18 @@ export default class App extends Component<{}> {
   static navigatorButtons = {
     leftButtons: [
       {
-        title: 'Dismiss', // for a textual button, provide the button title (label)
         id: 'dismissWrite', // id for this button, given in onNavigatorEvent(event) to help understand which button was clicked
-        buttonColor: '#002699', // Optional, iOS only. Set color for the button (can also be used in setButtons function to set different button style programatically)
-        buttonFontSize: 14, // Set font size for the button (can also be used in setButtons function to set different button style programatically)
-        buttonFontWeight: '600', // Set font weight for the button (can also be used in setButtons function to set different button style programatically)
+        component: 'NavIcons',
+        passProps: {
+          type: 'dismissWrite'
+        },
       },
     ]
   };
 
-  componentDidMount () {
-    Firebase.database().ref('/').on('value', (snapshot) => {console.log(snapshot.val())})
-  }
+  // componentDidMount () {
+  //   Firebase.database().ref('/').on('value', (snapshot) => {console.log(snapshot.val())})
+  // }
 
   constructor(props) {
     super(props)
@@ -110,12 +118,33 @@ export default class App extends Component<{}> {
     // console.log(this.state.category)
   }
 
+  findLabelForTextInput(identityName) {
+    if(identityName == 'ansOne') {
+      return (
+        'Option 1'
+      );
+    } else if(identityName == 'ansTwo') {
+      return (
+        'Option 2'
+      );
+    } else if(identityName == 'ansThree') {
+      return (
+        'Option 3'
+      );
+    } else if(identityName == 'ansFour') {
+      return (
+        'Option 4'
+      );
+    }
+  }
+
   callWritePollParameter(placeholder,identityName) {
     const saeInput = (
       <View style={{alignItems: 'center', justifyContent: 'center'}} key={identityName}>
         <Sae
           style={{height: 40, borderRadius: 10, borderColor: '#002699', borderWidth: 0, padding: 10, width: Dimensions.get('window').width - 20, margin: 5}}
-          inputStyle={{color: '#002699'}}
+          inputStyle={{color: '#002699', fontWeight: 'normal'}}
+          labelStyle={{color: '#002699', fontWeight: 'normal'}}
           label={[identityName]}
           iconClass={FontAwesomeIcon}
           iconName={'pencil'}
@@ -123,7 +152,8 @@ export default class App extends Component<{}> {
           iconColor={'#002699'}
           returnKeyType={'done'}
           value={this.state[identityName]}
-          label={identityName}
+          // label={() => {this.findLabelForTextInput(identityName)}}
+          label={labelName[identityName]}
           onChangeText={(text) => this.setState({[identityName]: text})}
         />
     </View>
@@ -136,13 +166,14 @@ export default class App extends Component<{}> {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.container}>
+        <KeyboardAwareScrollView contentContainerStyle={styles.container} scrollEnabled={false}>
           <Text style={{color: '#002699', fontSize: 20}}>
             Write a poll
           </Text>
           <Sae
             style={{height: 40, borderRadius: 10, borderColor: '#002699', borderWidth: 0, padding: 10, width: Dimensions.get('window').width - 20, margin: 5}}
-            inputStyle={{color: '#002699'}}
+            inputStyle={{color: '#002699', fontWeight: 'normal'}}
+            labelStyle={{color: '#002699', fontWeight: 'normal'}}
             iconClass={FontAwesomeIcon}
             iconName={'pencil'}
             iconSize={20}
@@ -157,7 +188,8 @@ export default class App extends Component<{}> {
             <Sae
               ref={ref => this._categoryRef = ref}
               style={{height: 40, borderRadius: 10, borderColor: '#002699', borderWidth: 0, padding: 10, width: Dimensions.get('window').width - 20, margin: 5}}
-              inputStyle={{color: '#002699'}}
+              inputStyle={{color: '#002699', fontWeight: 'normal'}}
+              labelStyle={{color: '#002699', fontWeight: 'normal'}}
               iconClass={FontAwesomeIcon}
               iconName={'pencil'}
               iconSize={20}
@@ -169,13 +201,11 @@ export default class App extends Component<{}> {
             />
             <View style={{backgroundColor: 'transparent', position: 'absolute', top:0, right:0, left:0, bottom:0}}/>
           </TouchableOpacity>
-          <View style={styles.writePollParameterStyleButton}>
-            <Button
-              onPress={() => this.onButtonPress('dismissWrite')}
-              title={'Post'}
-              color={'#ffff80'}
-              />
-          </View>
+        </KeyboardAwareScrollView>
+        <View style={styles.writePollParameterStyleButton}>
+          <TouchableOpacity onPress={() => this.onButtonPress('dismissWrite')}>
+            <FontAwesomeIcon name={'upload'} size={40} color={'#002699'} />
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
@@ -189,20 +219,17 @@ const styles = StyleSheet.create({
     borderColor: '#002699',
     borderWidth: 1,
     padding: 10,
-    width: Dimensions.get('window').width - 20,
+    width: Dimensions.get('window').width - 200,
     margin: 5
   },
   writePollParameterStyleButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#002699',
     height: 40,
     borderRadius: 10,
-    borderColor: '#002699',
-    borderWidth: 1,
     padding: 10,
     width: Dimensions.get('window').width - 20,
-    margin: 40
+    margin: 10
   },
   container: {
     flex: 1,

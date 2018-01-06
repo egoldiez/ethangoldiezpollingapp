@@ -16,20 +16,20 @@ Navigation.startSingleScreenApp({
     navigatorButtons: {
       rightButtons: [
         {
-          title: 'Write', // for a textual button, provide the button title (label)
           id: 'write', // id for this button, given in onNavigatorEvent(event) to help understand which button was clicked
-          buttonColor: '#002699', // Optional, iOS only. Set color for the button (can also be used in setButtons function to set different button style programatically)
-          buttonFontSize: 14, // Set font size for the button (can also be used in setButtons function to set different button style programatically)
-          buttonFontWeight: 600, // Set font weight for the button (can also be used in setButtons function to set different button style programatically)
+          component: 'NavIcons',
+          passProps: {
+            type: 'writePoll'
+          },
         },
       ],
       leftButtons: [
         {
-          title:'Vote',
           id: 'vote',
-          buttonColor: '#002699',
-          buttonFontSize: 14,
-          buttonFontWeight: 600
+          component: 'NavIcons',
+          passProps: {
+            type: 'vote'
+          },
         }
       ]
     } // override the nav buttons for the screen, see "Adding buttons to the navigator" below (optional)
